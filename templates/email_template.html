@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ email_subject }}</title>
+</head>
+<body>
+    <p><strong>Dear {{ recipient_name }},</strong></p>
+    {{ email_text|safe }}
+</body>
+</html>
+
+

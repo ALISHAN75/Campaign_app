@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>list contacts</title>
+{% endblock title %}
+
+{% block body %}
+
+<main>
+    <div class="container-xl px-5">
+        <div class="d-flex mt-4 mb-2 align-items-center">
+            <h1 class="mb-0">Contacts</h1>
+        </div>
+        <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
+            {% if messages %}
+
+            {% for message in messages %}
+            <div {% if message.tags %} class="alert alert-{{ message.tags }} col-md-12" {% endif %} role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+
+            {% endif %}
+
+            <div class="dataTable-top" style="width:100%">
+                <div class="dataTable-dropdown mb-3">
+                    <a href="{% url 'campaign_management:add_contact' %}"
+                        style="text-decoration: none!important;"><button class="btn btn-success" type="button"><span
+                                class="material-icons-outlined">
+                                add
+                            </span> Add Contact
+                        </button></a>
+                </div>
+                
+                      
+
+
+                
+                
+                <!-- <div class="dataTable-search" style="width: 40%;">
+
+                    <form id="syncBtn" method="GET" action="/campaign-management/sync-contacts/">
+                        {% csrf_token %}
+                        <button id="syncBtn" class="btn btn-success mb-3" type="submit">
+                            Sync Contacts
+                        </button>
+                    </form>
+                     -->
+
+                     <div class="dataTable-search" style="width: 40%;">
+                    <form id="syncForm" method="GET" action="/campaign-management/sync-contacts/">
+                        {% csrf_token %}
+                        <button id="syncBtn" class="btn btn-success mb-3" type="submit">
+                            Sync Contacts
+                        </button>
+                    </form>
+                    <p id="syncingMessage" class="text-muted" style="display: none;">
+                        Contacts are syncing, please wait...
+                    </p>
+                    
+
+
+                    
+
+                    <form method="GET" action="">
+                        <input class="dataTable-input" name="search_text" placeholder="Search conatcts....."
+                            type="text">
+                    </form>
+                </div>
+            </div>
+            <div class="dataTable-container">
+                <table id="datatablesSimple" class="dataTable-table">
+                    <thead>
+                        <tr>
+                            <th><a href="#">Name </a></th>
+                            <th><a href="#">Email</a></th>
+                            <th><a href="#">Phone Number</a></th>
+                            <th><a href="#">City</a></th>
+                            <th><a href="#">Address</a></th>
+                            <th><a href="#">Is IMS Contact</a></th>
+                            <th><a href="#">Is Advertised Contact</a></th>
+                            <th><a href="#">Created Date</a></th>
+                            <th><a href="#">Updated Date</a></th>
+                            <th><a href="#">Actions</a></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contact in contacts_items_paginator %}
+                        <tr>
+                            <td>{{contact.name}}</td>
+                            <td>{{contact.email}}</td>
+                            <td>{{contact.phone}}</td>
+                            <td>{{contact.city}}</td>
+                            <td>{{contact.address}}</td>
+                            <td>{{contact.is_ims_contact}}</td>
+                            <td>{{contact.is_advertised_contact}}</td>
+                            <td>{{contact.created_on}}</td>
+                            <td>{{contact.updated_on}}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" id="dropdownMenuButton"
+                                        type="button" data-bs-toggle="dropdown" aria-expanded="false"> Actions <i
+                                            class="trailing-icon material-icons dropdown-caret">arrow_drop_down</i>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                                        <li>
+                                            <a class="dropdown-item"
+                                                href="{% url 'campaign_management:edit_contact' contact.id %}">
+                                                <i class="material-icons-outlined leading-icon">edit</i>
+                                                Edit
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                                href="{% url 'campaign_management:delete_contact' contact.id %}">
+                                                <i class="material-icons-outlined leading-icon">delete</i>
+                                                Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+
+                        </tr>
+                        {% empty %}
+                        <h4 class="text-center m-5">No Data Found!</h4>
+                        {% endfor %}
+
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="dataTable-bottom mt-3" style="display: flex;
+            flex-direction: row;
+            justify-content: center;
+            flex-wrap: wrap;
+            color: rgb(84, 60, 107);">
+                {{ total_contacts }} Contacts
+            </div>
+            
+            <div class="dataTable-bottom mt-3" style="display: flex;
+            flex-direction: row;
+            justify-content: center;
+            flex-wrap: wrap;">
+                <nav class="dataTable-pagination">
+                    <ul class="dataTable-pagination-list">
+
+
+
+                        <li class="pager">
+                            <a {% if contacts_items_paginator.has_previous %}
+                                href="/campaign-management/list-contacts/?page={{contacts_items_paginator.previous_page_number}}"
+                                {% else %} disabled="true" {% endif %}>
+                                &lt;
+                            </a>
+                        </li>
+
+                        
+                        {% for page in page_range %}
+                        {% if page %}
+                        {% if page == contacts_items_paginator.number %}
+                        <li class="active"><a href="#">{{ page }}</a></li>
+                        {% else %}
+                        {% if page == "First" %}
+                        <li>
+                            <a href="/campaign-management/list-contacts/?page=1">{{page}}</a>
+                        </li>
+                        {% elif page == "Last" %}
+                        <li>
+                            <a
+                                href="/campaign-management/list-contacts/?page={{contacts_items_paginator.paginator.num_pages}}">{{page}}</a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="/campaign-management/list-contacts/?page={{page}}">{{page}}</a>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+                        {% endif %}
+                        {% endfor %}
+
+
+                        <li class="pager">
+                            <a {% if contacts_items_paginator.has_next %}
+                                href="/campaign-management/list-contacts/?page={{contacts_items_paginator.next_page_number}}"
+                                {% else %} disabled="true" {% endif %}>
+                                &gt;
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+        </div>
+        <div class="mb-5"></div>
+    </div>
+</main>
+{% endblock body %}
+
+{% block js %} 
+<script>
+    const syncBtn = document.getElementById("syncBtn");
+    const syncingMessage = document.getElementById("syncingMessage");
+    const syncForm = document.getElementById("syncForm");
+
+    syncForm.addEventListener("submit", function (event) {
+        // event.preventDefault();
+        syncBtn.disabled = true;
+        syncingMessage.style.display = "block";
+
+        // // Perform the actual sync operation (you might need to add AJAX or other code here)
+
+        // // For demonstration purposes, let's simulate a delay of 3 seconds
+        // setTimeout(function () {
+        //     syncBtn.disabled = false;
+        //     syncingMessage.style.display = "none";
+        // }, 3000); // Change this value to your actual sync time in milliseconds
+    });
+
+    
+</script>
+
+{% endblock js %}

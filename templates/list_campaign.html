@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>list Campaigns</title>
+{% endblock title %}
+
+{% block body %}
+
+<main>
+    <div class="container-xl px-5">
+        <div class="d-flex mt-4 mb-4 align-items-center">
+            <h1 class="mb-0 text-center">Campaign Succeed Contact Messages</h1>
+        </div>
+        <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
+            {% if messages %}
+
+            {% for message in messages %}
+            <div {% if message.tags %} class="alert alert-{{ message.tags }} col-md-12" {% endif %} role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+           <!-- Add the dropdown above the table -->
+            <!-- <div class="mb-3">
+                <label for="campaignSelect" class="form-label">Select Campaign:</label>
+                <select class="form-select" id="campaignSelect" name="campaign">
+                    <option value="" {% if not selected_campaign_id %} selected {% endif %}>All Campaigns</option>
+                    {% for campaign in campaigns %}
+                    <option value="{{ campaign.id }}" {% if selected_campaign_id == campaign.id %} selected {% endif %}>{{ campaign.name}} - {{ campaign.type}}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary mt-3">Filter</button>
+            </div> -->
+
+             <!-- Add the form element to wrap the dropdown and filter button -->
+            <form method="GET" action="{% url 'campaign_management:list_campaigns' %}">
+                <div class="mb-3">
+                    <label for="campaignSelect" class="form-label">Select Campaign:</label>
+                    <select class="form-select" id="campaignSelect" name="campaign">
+                        <option value="" {% if not selected_campaign_id %} selected {% endif %}>All Campaigns</option>
+                        {% for campaign in campaigns %}
+                        <option value="{{ campaign.id }}" {% if selected_campaign_id == campaign.id %} selected {% endif %}>{{ campaign.name}} - {{ campaign.type}}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary mt-3">Filter</button>
+                </div>
+            </form>
+
+
+            <!-- dataTable-table -->
+            <div class="dataTable-container">
+                <table id="datatablesSimple" class="dataTable-table">
+                    <thead>
+                        <tr>
+                            <th><a href="#">Campaign Name </a></th>
+                            <th><a href="#">Campaign Type</a></th>
+                            <th><a href="#">Campaign Status</a></th>
+                            <th><a href="#">Contact Name</a></th>
+                            <th><a href="#">Contact Email</a></th>
+                            <th><a href="#">Contact Phone Number</a></th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for campaign_msgs in campaign_msgs_items_paginator %}
+                        <tr>
+                            <td>{{campaign_msgs.campaign.name}}</td>
+                            <td>{{campaign_msgs.campaign.type}}</td>
+                            <td>{{campaign_msgs.contacts.status}}</td>
+                            <td>{{campaign_msgs.contacts.name}}</td>
+                            <td>{{campaign_msgs.contacts.email}}</td>
+                            <td>{{campaign_msgs.contacts.phone}}</td>
+
+
+                        </tr>
+                        {% empty %}
+                        <h4 class="text-center m-5">No Data Found!</h4>
+                        {% endfor %}
+
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="dataTable-bottom mt-3" style="display: flex;
+            flex-direction: row;
+            justify-content: center;
+            flex-wrap: wrap;">
+                <nav class="dataTable-pagination">
+                    <ul class="dataTable-pagination-list">
+
+
+
+                        <li class="pager">
+                            <a {% if camppaign_msgs_items_paginator.has_previous %}
+                                href="/campaign-management/list-campaign/?page={{camppaign_msgs_items_paginator.previous_page_number}}"
+                                {% else %} disabled="true" {% endif %}>
+                                &lt;
+                            </a>
+                        </li>
+
+
+                        {% for page in page_range %}
+                        {% if page %}
+                        {% if page == camppaign_msgs_items_paginator.number %}
+                        <li class="active"><a href="#">{{ page }}</a></li>
+                        {% else %}
+                        {% if page == "First" %}
+                        <li>
+                            <a href="/campaign-management/list-campaign/?page=1">{{page}}</a>
+                        </li>
+                        {% elif page == "Last" %}
+                        <li>
+                            <a
+                                href="/campaign-management/list-campaign/?page={{camppaign_msgs_items_paginator.paginator.num_pages}}">{{page}}</a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="/campaign-management/list-campaign/?page={{page}}">{{page}}</a>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+                        {% endif %}
+                        {% endfor %}
+
+
+                        <li class="pager">
+                            <a {% if camppaign_msgs_items_paginator.has_next %}
+                                href="/campaign-management/list-campaign/?page={{camppaign_msgs_items_paginator.next_page_number}}"
+                                {% else %} disabled="true" {% endif %}>
+                                &gt;
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+        </div>
+        <div class="mb-5"></div>
+    </div>
+</main>
+
+
+
+{% endblock body %}

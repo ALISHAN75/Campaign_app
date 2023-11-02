@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>list all campaigns</title>
+{% endblock title %}
+
+{% block body %}
+
+<main>
+    <div class="container-xl px-5">
+        <div class="d-flex mt-4 mb-2 align-items-center">
+            <h1 class="mb-0">All Campaigns</h1>
+        </div>
+        <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
+            {% if messages %}
+
+            {% for message in messages %}
+            <div {% if message.tags %} class="alert alert-{{ message.tags }} col-md-12" {% endif %} role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+
+            {% endif %}
+
+ 
+            <div class="dataTable-container">
+                <table id="datatablesSimple" class="dataTable-table">
+                    <thead>
+                        <tr>
+                            <th><a href="#">Name </a></th>
+                            <th><a href="#">Type</a></th>
+                            <th><a href="#">Status</a></th>
+                            <th><a href="#">Date Time</a></th>
+                            <th><a href="#">Email Subject</a></th>
+                            <th><a href="#">Email Body</a></th>
+                            <th><a href="#">SMS Body</a></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cmpaign in campaigns_items_paginator %}
+                        <tr>
+                            <td>{{cmpaign.name}}</td>
+                            <td>{{cmpaign.type}}</td>
+                            <td>{{cmpaign.status}}</td>
+                            <td>{{cmpaign.campaign_datetime}}</td>
+                            <td>{{cmpaign.email_subject}}</td>
+                            <td>{{cmpaign.email_body|safe  }}</td>
+                            <td>{{cmpaign.sms_body}}</td>
+                          
+       
+
+                        </tr>
+                        {% empty %}
+                        <h4 class="text-center m-5">No Data Found!</h4>
+                        {% endfor %}
+
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="dataTable-bottom mt-3" style="display: flex;
+            flex-direction: row;
+            justify-content: center;
+            flex-wrap: wrap;
+            color: rgb(84, 60, 107);">
+                {{ total_campaigns }} Campaigns
+            </div>
+
+            <div class="dataTable-bottom mt-3" style="display: flex;
+            flex-direction: row;
+            justify-content: center;
+            flex-wrap: wrap;">
+                <nav class="dataTable-pagination">
+                    <ul class="dataTable-pagination-list">
+
+
+
+                        <li class="pager">
+                            <a {% if campaigns_items_paginator.has_previous %}
+                                href="/campaign-management/list-prev-campaigns/?page={{campaigns_items_paginator.previous_page_number}}"
+                                {% else %} disabled="true" {% endif %}>
+                                &lt;
+                            </a>
+                        </li>
+
+
+                        {% for page in page_range %}
+                        {% if page %}
+                        {% if page == campaigns_items_paginator.number %}
+                        <li class="active"><a href="#">{{ page }}</a></li>
+                        {% else %}
+                        {% if page == "First" %}
+                        <li>
+                            <a href="/campaign-management/list-prev-campaigns/?page=1">{{page}}</a>
+                        </li>
+                        {% elif page == "Last" %}
+                        <li>
+                            <a
+                                href="/campaign-management/list-prev-campaigns/?page={{campaigns_items_paginator.paginator.num_pages}}">{{page}}</a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="/campaign-management/list-prev-campaigns/?page={{page}}">{{page}}</a>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+                        {% endif %}
+                        {% endfor %}
+
+
+                        <li class="pager">
+                            <a {% if campaigns_items_paginator.has_next %}
+                                href="/campaign-management/list-prev-campaigns/?page={{campaigns_items_paginator.next_page_number}}"
+                                {% else %} disabled="true" {% endif %}>
+                                &gt;
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+        </div>
+        <div class="mb-5"></div>
+    </div>
+</main>
+{% endblock body %}
+
+{% block js %}
+<script>
+    const syncBtn = document.getElementById("syncBtn");
+    const syncingMessage = document.getElementById("syncingMessage");
+    const syncForm = document.getElementById("syncForm");
+
+    syncForm.addEventListener("submit", function (event) {
+        // event.preventDefault();
+        syncBtn.disabled = true;
+        syncingMessage.style.display = "block";
+
+        // // Perform the actual sync operation (you might need to add AJAX or other code here)
+
+        // // For demonstration purposes, let's simulate a delay of 3 seconds
+        // setTimeout(function () {
+        //     syncBtn.disabled = false;
+        //     syncingMessage.style.display = "none";
+        // }, 3000); // Change this value to your actual sync time in milliseconds
+    });
+
+
+</script>
+
+{% endblock js %}

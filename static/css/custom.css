@@ -1,0 +1,10 @@
+/* custom_comments.css */
+.mce-comment-author {
+  display: none;  /* Hide the author name in the comment bubble */
+}
+
+.mce-comment-content {
+  display: none;  /* Hide the comment content (HTML tags) in the comment bubble */
+}
+
+
